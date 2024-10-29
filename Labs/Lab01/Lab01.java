@@ -20,9 +20,72 @@ interface IStudentGrades {
 // Should not add if StudentGrades is full
 // StudentGrades should take int size as paramter in its constructor
 class Student {
+    private String name;
+    private double grade;
+
+    public Student(String name, double grade) {
+        this.name = name;
+        this.grade = grade;
+    }
+
+    
+    public double getGrade() {
+        return grade;
+    }
+
+    
+    public String getName() {
+        return name;
+    }
 
 }
 
-class StudentGrades {
+class StudentGrades  {
+    private Student[] students;
+    private int currentSize;
 
+    public StudentGrades(int maxSize) {
+        this.students = new Student[maxSize];
+        this.currentSize = 0; 
+    }
+
+    public boolean addStudent(Student student) {
+        if (currentSize >= students.length) {
+            return false; 
+        }
+
+        int i = currentSize - 1;
+        
+        while (i >= 0 && students[i].getGrade() < student.getGrade()) {
+            students[i + 1] = students[i]; 
+            i--;
+        }
+        
+        students[i + 1] = student;
+        currentSize++;
+        
+        return true;
+    }
+
+    public boolean removeStudent(int index) {
+        if (index < 0 || index >= currentSize) {
+            return false; 
+        }
+
+        for (int i = index; i < currentSize - 1; i++) {
+            students[i] = students[i + 1]; 
+        }
+        students[currentSize - 1] = null; 
+        currentSize--;
+        
+        return true;
+    }
+
+    public int getCurrentSize() {
+        return currentSize;
+    }
+
+    public Student[] getStudents() {
+        return students;
+    }
 }
