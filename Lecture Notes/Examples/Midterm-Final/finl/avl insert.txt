@@ -1,0 +1,23 @@
+Node insert(Node node,int key){
+        if (node==null){
+            return new Node(key);}
+        if (key < node.key){
+            node.left=insert(node.left,key);}
+        else if(key > node.key){
+            node.right=insert(node.right,key);}
+        else{
+            return node;}
+        node.height= 1+ Math.max(getHeight(node.left),getHeight(node.right));
+        int balance= getBalance(node);
+        if (balance > 1 && key < node.left.key){
+            node=rightRotate(node);
+        }
+        if (balance < -1 && key > node.right.key){
+            node=leftRotate(node);
+        }
+        if (balance >1&& key>node.left.key){
+            //
+        }
+
+        return node;
+    }
