@@ -357,7 +357,7 @@ class NodeHeap <K extends Comparable<? super K>, V> implements PriorityQueue <K,
         if (isEmpty()) {
             root = newNode;
         } else {
-            TreeNode<Entry<K, V>> parent = findParent();
+            TreeNode<Entry<K, V>> parent = findParrent();
             newNode.parrent = parent;
             if (parent.left == null) {
                 parent.left = newNode;
@@ -417,7 +417,7 @@ class NodeHeap <K extends Comparable<? super K>, V> implements PriorityQueue <K,
         return lastNode;
     }
 
-    private TreeNode<Entry<K, V>> findParent() {
+    private TreeNode<Entry<K, V>> findParrent() {
         if (root == null) return null;
         
         Queue<TreeNode<Entry<K, V>>> queue = new LinkedList<>();
