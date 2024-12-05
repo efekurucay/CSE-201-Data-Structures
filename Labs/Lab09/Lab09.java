@@ -78,9 +78,7 @@ public class Lab09 {
         int n = array.length;
 
         // Build max heap
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(array, n, i);
-        }
+        for (int i = n / 2 - 1; i >= 0; i--) { heapify(array, n, i); }
 
         // Extract elements from heap one by one
         for (int i = n - 1; i > 0; i--) {
@@ -93,14 +91,9 @@ public class Lab09 {
         int largest = parent;
         int left = 2 * parent + 1;
         int right = 2 * parent + 2;
+        if (left < n && array[left] > array[largest]) {largest = left;}
 
-        if (left < n && array[left] > array[largest]) {
-            largest = left;
-        }
-
-        if (right < n && array[right] > array[largest]) {
-            largest = right;
-        }
+        if (right < n && array[right] > array[largest]) {largest = right;}
 
         if (largest != parent) {
             swap(array, parent, largest);
@@ -124,18 +117,12 @@ class Entry <K extends Comparable <? super K>, V> implements Comparable<K> {
         this.value = value;
     }
 
-    public K getKey() {
-        return key;
-    }
+    public K getKey() {return key;}
 
-    public V getValue() {
-        return value;
-    }
+    public V getValue() {return value;}
 
     @Override
-    public int compareTo(K o) {
-        return key.compareTo(o);
-    }
+    public int compareTo(K o) {return key.compareTo(o);}
 } 
 
 class TreeNode <T> {
@@ -144,9 +131,7 @@ class TreeNode <T> {
     TreeNode<T> right;
     TreeNode<T> parrent;
 
-    public TreeNode(T entry) {
-        this.entry = entry;
-    }
+    public TreeNode(T entry) {this.entry = entry;}
 
 }
 
@@ -168,9 +153,7 @@ class ArrayHeap <K extends Comparable<? super K>, V> implements PriorityQueue <K
     private int size;
     private static final int DEFAULT_CAPACITY = 100;
 
-    public Entry<K, V>[] getHeap() {
-        return heap;
-    }
+    public Entry<K, V>[] getHeap() {return heap;}
 
     public ArrayHeap(int capacity) {
         heap = (Entry<K, V>[]) new Entry[capacity];
@@ -178,47 +161,31 @@ class ArrayHeap <K extends Comparable<? super K>, V> implements PriorityQueue <K
     }
 
     @Override
-    public int size() {
-        return size;
-    }
+    public int size() {return size;}
 
     @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
+    public boolean isEmpty() {return size == 0;}
 
     @Override
     public V remove() {
-        if (isEmpty()) {
-            return null;
-        }
-
+        if (isEmpty()) {return null;}
         Entry<K, V> min = heap[0];
         heap[0] = heap[size - 1];
         heap[size - 1] = null;
         size--;
-
-        if (!isEmpty()) {
-            heapifyDown(0);
-        }
-
+        if (!isEmpty()) {heapifyDown(0);}
         return min.getValue();
     }
 
     @Override
     public V peek() {
-        if (isEmpty()) {
-            return null;
-        }
+        if (isEmpty()) {return null;}
         return heap[0].getValue();
     }
 
     @Override
     public void insert(K priority, V element) {
-        if (size >= heap.length) {
-            throw new IllegalStateException("Heap is full");
-        }
-
+        if (size >= heap.length) {throw new IllegalStateException("Heap is full");}
         heap[size] = new Entry<>(priority, element);
         heapifyUp(size);
         size++;
