@@ -1,3 +1,33 @@
+/**---------------------------------------------------
+████████████████████████████████████████████████████████████████████████████████████
+████████████████████████████████████████████████████████████████████████████████████
+██████ *Akdeniz University CSE201 Data Structures Labs                        ██████
+██████                                                                        ██████
+██████ *Yahya Efe Kurucay                                                     ██████
+██████                                                                        ██████
+██████ *12.12.2024                                                            ██████
+██████                                                                        ██████
+██████ *Description: Lab11 Exercises                                          ██████ 
+██████                                                                        ██████
+██████ *Proposed grade: ?                                                     ██████ 
+██████                                                                        ██████
+██████ *Website: https://efekurucay.com                                       ██████
+██████                                                                        ██████
+██████ *                                                                      ██████
+██████ *                                                                      ██████
+██████ *    ███████ ███████ ███████   |    ███████ ███████ ███████            ██████ 
+██████ *    ██      ██      ██        |    ██      ██      ██                 ██████ 
+██████ *    █████   █████   █████     |    █████   █████   █████              ██████ 
+██████ *    ██      ██      ██        |    ██      ██      ██                 ██████ 
+██████ *    ███████ ██      ███████   |    ███████ ██      ███████            ██████ 
+██████ *                                                                      ██████
+██████ *                                                                      ██████
+██████ *                                                                      ██████
+████████████████████████████████████████████████████████████████████████████████████
+████████████████████████████████████████████████████████████████████████████████████                          
+ */
+
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -5,17 +35,19 @@ import java.util.Queue;
 
 public class Lab11 {
     public static void main(String[] args) {
-        RBTree<Integer> tree = new RBTree<>();
-        tree.insert(4);
-        tree.insert(2);
-        tree.insert(7);
-        tree.insert(6);
-    
-        List<Integer> list = new ArrayList<>();
-        tree.levelorder(list);
-        for (Integer integer : list) {
-            System.out.print(integer + " ");
+        RBTree<Integer> rbTree = new RBTree<>();
+        Integer[] data = {4, 2, 7, 6, 1, 3};
+        
+        System.out.println("Inserting elements: ");
+        for (int num : data) {
+            System.out.print(num + " ");
+            rbTree.insert(num);
         }
+        System.out.println("\n");
+        List<Integer> inorderList = new ArrayList<>();
+        rbTree.inorder(inorderList);
+        System.out.print("Inorder traversal: ");
+        System.out.println(inorderList);
     }
 }
 
@@ -63,6 +95,8 @@ class Node<T> {
 class RBTree <T extends Comparable<? super T>> implements IRB<T> {
     private Node<T> root;
     private int size;
+    private static final boolean RED = true;
+    private static final boolean BLACK = false;
 
     public RBTree() {
         root = null;
@@ -79,91 +113,9 @@ class RBTree <T extends Comparable<? super T>> implements IRB<T> {
         return size == 0;
     }
 
-    @Override
-    public void insert(T element) {
-        Node<T> node = new Node<>(element, true); // New nodes are red
-        if (root == null) {
-            root = node;
-            root.color = false; // Root must be black
-            size++;
-            return;
-        }
 
-        // Regular BST insertion
-        Node<T> current = root;
-        Node<T> parent = null;
-        while (current != null) {
-            parent = current;
-            if (element.compareTo(current.element) < 0) {
-                current = current.left;
-            } else {
-                current = current.right;
-            }
-        }
 
-        node.parent = parent;
-        if (element.compareTo(parent.element) < 0) {
-            parent.left = node;
-        } else {
-            parent.right = node;
-        }
-
-        // Fix Red-Black properties
-        reconstruction(node);
-        size++;
-    }
-
-    @Override
-    public Node<T> reconstruction(Node<T> node) {
-        while (node != root && node.parent.color) {
-            Node<T> parent = node.parent;
-            Node<T> grandparent = parent.parent;
-            if (grandparent == null) break;
-
-            // Parent is left child of grandparent
-            if (parent == grandparent.left) {
-                Node<T> uncle = grandparent.right;
-                
-                // Case 1: Uncle is red
-                if (uncle != null && uncle.color) {
-                    parent.color = false;
-                    uncle.color = false;
-                    grandparent.color = true;
-                    node = grandparent;
-                } else {
-                    // Case 2: Node is right child
-                    if (node == parent.right) {
-                        node = parent;
-                        leftRotate(node);
-                    }
-                    // Case 3: Node is left child
-                    parent.color = false;
-                    grandparent.color = true;
-                    rightRotate(grandparent);
-                }
-            } else { // Parent is right child of grandparent
-                Node<T> uncle = grandparent.left;
-                
-                if (uncle != null && uncle.color) {
-                    parent.color = false;
-                    uncle.color = false;
-                    grandparent.color = true;
-                    node = grandparent;
-                } else {
-                    if (node == parent.left) {
-                        node = parent;
-                        rightRotate(node);
-                    }
-                    parent.color = false;
-                    grandparent.color = true;
-                    leftRotate(grandparent);
-                }
-            }
-        }
-        root.color = false; // Root must be black
-        return node;
-    }
-
+    
     @Override
     public Node<T> leftRotate(Node<T> node) {
         Node<T> rightChild = node.right;
@@ -174,6 +126,7 @@ class RBTree <T extends Comparable<? super T>> implements IRB<T> {
         }
         
         rightChild.parent = node.parent;
+        
         if (node.parent == null) {
             root = rightChild;
         } else if (node == node.parent.left) {
@@ -184,10 +137,10 @@ class RBTree <T extends Comparable<? super T>> implements IRB<T> {
         
         rightChild.left = node;
         node.parent = rightChild;
+        
         return rightChild;
     }
 
-    @Override
     public Node<T> rightRotate(Node<T> node) {
         Node<T> leftChild = node.left;
         node.left = leftChild.right;
@@ -197,6 +150,7 @@ class RBTree <T extends Comparable<? super T>> implements IRB<T> {
         }
         
         leftChild.parent = node.parent;
+        
         if (node.parent == null) {
             root = leftChild;
         } else if (node == node.parent.right) {
@@ -207,8 +161,11 @@ class RBTree <T extends Comparable<? super T>> implements IRB<T> {
         
         leftChild.right = node;
         node.parent = leftChild;
+        
         return leftChild;
     }
+   
+     
 
     @Override
     public void recolor(Node<T> node) {
@@ -216,41 +173,135 @@ class RBTree <T extends Comparable<? super T>> implements IRB<T> {
     }
 
     @Override
+    public Node<T> reconstruction(Node<T> node) {
+        // color change with uncle
+        Node<T> uncle = getUncle(node);
+        if (uncle != null && uncle.color == RED) {
+            node.parent.color = BLACK;
+            uncle.color = BLACK;
+            node.parent.parent.color = RED;
+            return node.parent.parent;
+        }
+        
+        if (node == node.parent.right && node.parent == node.parent.parent.left) {
+            node = node.parent;
+            leftRotate(node);
+        } else if (node == node.parent.left && node.parent == node.parent.parent.right) {
+            node = node.parent;
+            rightRotate(node);
+        }
+        
+        node.parent.color = BLACK;
+        node.parent.parent.color = RED;
+        
+        if (node == node.parent.left) {
+            rightRotate(node.parent.parent);
+        } else {
+            leftRotate(node.parent.parent);
+        }
+        
+        return node;
+    }
+
+    private Node<T> getSibling(Node<T> node) {
+        if (node == null || node.parent == null) {
+            return null;
+        }
+        if (node == node.parent.left) {
+            return node.parent.right;
+        } else {
+            return node.parent.left;
+        }
+    }
+
+    private Node<T> getUncle(Node<T> node) {
+        if (node.parent == null || node.parent.parent == null) {
+            return null;
+        }
+        return getSibling(node.parent);
+    }
+
+    @Override
+    public void insert(T element) {
+        Node<T> newNode = new Node<>(element, RED);
+        
+        if (root == null) {
+            root = newNode;
+            root.color = BLACK;
+            size++;
+            return;
+        }
+        
+        Node<T> current = root;
+        Node<T> parent = null;
+        
+        while (current != null) {
+            parent = current;
+            int compare = element.compareTo(current.element);
+            
+            if (compare < 0) {
+                current = current.left;
+            } else if (compare > 0) {
+                current = current.right;
+            } else {
+                return; // Duplicate 
+            }
+        }
+        
+        newNode.parent = parent;
+        int compare = element.compareTo(parent.element);
+        
+        if (compare < 0) {
+            parent.left = newNode;
+        } else {
+            parent.right = newNode;
+        }
+        
+        size++;
+        
+        fixInsert(newNode);
+    }
+
+    private void fixInsert(Node<T> node) {
+        while (node != root && node.parent.color == RED) {
+            node = reconstruction(node);
+        }
+        root.color = BLACK;
+    }
+
+    @Override
     public boolean contains(T element) {
         Node<T> current = root;
         while (current != null) {
-            int cmp = element.compareTo(current.element);
-            if (cmp < 0) current = current.left;
-            else if (cmp > 0) current = current.right;
-            else return true;
+            int compare = element.compareTo(current.element);
+            if (compare == 0) {
+                return true;
+            } else if (compare < 0) {
+                current = current.left;
+            } else {
+                current = current.right;
+            }
         }
         return false;
     }
 
     @Override
-    public boolean remove(T element) {
-        // Simple remove implementation
-        if (!contains(element)) return false;
-        size--;
-        return true;
-    }
-
-    @Override
     public void inorder(List<T> list) {
-        inorderHelper(root, list);
+        inorderTraversal(root, list);
     }
 
-    private void inorderHelper(Node<T> node, List<T> list) {
+    private void inorderTraversal(Node<T> node, List<T> list) {
         if (node != null) {
-            inorderHelper(node.left, list);
+            inorderTraversal(node.left, list);
             list.add(node.element);
-            inorderHelper(node.right, list);
+            inorderTraversal(node.right, list);
         }
     }
 
     @Override
     public void levelorder(List<T> list) {
         if (root == null) return;
+        
         Queue<Node<T>> queue = new LinkedList<>();
         queue.offer(root);
         
@@ -258,8 +309,38 @@ class RBTree <T extends Comparable<? super T>> implements IRB<T> {
             Node<T> current = queue.poll();
             list.add(current.element);
             
-            if (current.left != null) queue.offer(current.left);
-            if (current.right != null) queue.offer(current.right);
+            if (current.left != null) {
+                queue.offer(current.left);
+            }
+            if (current.right != null) {
+                queue.offer(current.right);
+            }
         }
+    }
+
+    @Override
+    public boolean remove(T element) {
+        Node<T> node = findNode(element);
+        if (node == null) {
+            return false;
+        }
+        
+        size--;
+        return true;
+    }
+
+    private Node<T> findNode(T element) {
+        Node<T> current = root;
+        while (current != null) {
+            int compare = element.compareTo(current.element);
+            if (compare == 0) {
+                return current;
+            } else if (compare < 0) {
+                current = current.left;
+            } else {
+                current = current.right;
+            }
+        }
+        return null;
     }
 }
